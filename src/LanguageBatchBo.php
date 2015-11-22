@@ -1,7 +1,8 @@
 <?php
 
 namespace Language;
-
+require 'Config.php';
+require 'ApiCall.php';
 /**
  * Business logic related to generating language files.
  */
@@ -14,6 +15,9 @@ class LanguageBatchBo
 	 */
 	protected static $applications = array();
 
+	public function __construct() {
+	}
+
 	/**
 	 * Starts the language file generation.
 	 *
@@ -23,14 +27,13 @@ class LanguageBatchBo
 	{
 		// The applications where we need to translate.
 		self::$applications = Config::get('system.translated_applications');
-
 		echo "\nGenerating language files\n";
 		foreach (self::$applications as $application => $languages) {
-			echo "[APPLICATION: " . $application . "]\n";
+			echo "[APPLICATION: " . $application . "]\n<br>";
 			foreach ($languages as $language) {
-				echo "\t[LANGUAGE: " . $language . "]";
+				echo "\t[LANGUAGE: " . $language . "]<br>";
 				if (self::getLanguageFile($application, $language)) {
-					echo " OK\n";
+					echo " OK\n<br>";
 				}
 				else {
 					throw new \Exception('Unable to generate language file!');
@@ -111,20 +114,20 @@ class LanguageBatchBo
 		echo "\nGetting applet language XMLs..\n";
 
 		foreach ($applets as $appletDirectory => $appletLanguageId) {
-			echo " Getting > $appletLanguageId ($appletDirectory) language xmls..\n";
+			echo " Getting > $appletLanguageId ($appletDirectory) language xmls..\n<br>";
 			$languages = self::getAppletLanguages($appletLanguageId);
 			if (empty($languages)) {
 				throw new \Exception('There is no available languages for the ' . $appletLanguageId . ' applet.');
 			}
 			else {
-				echo ' - Available languages: ' . implode(', ', $languages) . "\n";
+				echo '- Available languages: ' . implode(', ', $languages) . "\n<br>";
 			}
 			$path = Config::get('system.paths.root') . '/cache/flash';
 			foreach ($languages as $language) {
 				$xmlContent = self::getAppletLanguageFile($appletLanguageId, $language);
 				$xmlFile    = $path . '/lang_' . $language . '.xml';
 				if (strlen($xmlContent) == file_put_contents($xmlFile, $xmlContent)) {
-					echo " OK saving $xmlFile was successful.\n";
+					echo " OK saving $xmlFile was successful.\n<br>";
 				}
 				else {
 					throw new \Exception('Unable to save applet: (' . $appletLanguageId . ') language: (' . $language
@@ -134,7 +137,7 @@ class LanguageBatchBo
 			echo " < $appletLanguageId ($appletDirectory) language xml cached.\n";
 		}
 
-		echo "\nApplet language XMLs generated.\n";
+		echo "\nApplet language XMLs generated.\n<br>";
 	}
 
 	/**
